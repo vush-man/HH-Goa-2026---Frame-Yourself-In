@@ -1,26 +1,10 @@
 import React, { useRef, useState } from 'react';
-import { Upload, Image as ImageIcon, Camera, Loader2, Sparkles, CheckCircle } from 'lucide-react';
+import { Upload, Camera, Loader2, Sparkles } from 'lucide-react';
 import { convertHeicIfNeeded } from '../utils/heicConverter';
 
 interface PhotoUploaderProps {
   onPhotoSelected: (file: File, dataUrl: string) => void;
 }
-
-// Sample avatars for quick instant testing
-const SAMPLE_AVATARS = [
-  {
-    name: 'Dev Portrait',
-    url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=800'
-  },
-  {
-    name: 'Hacker Studio',
-    url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=800'
-  },
-  {
-    name: 'Tech Founder',
-    url: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=800'
-  }
-];
 
 export const PhotoUploader: React.FC<PhotoUploaderProps> = ({ onPhotoSelected }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -40,26 +24,6 @@ export const PhotoUploader: React.FC<PhotoUploaderProps> = ({ onPhotoSelected })
       console.error('File load error:', err);
       setErrorMessage('Failed to read image file. Please try another image file.');
     } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  const handleSampleSelect = async (sampleUrl: string, sampleName: string) => {
-    setIsProcessing(true);
-    setErrorMessage(null);
-    try {
-      const resp = await fetch(sampleUrl);
-      const blob = await resp.blob();
-      const file = new File([blob], `${sampleName.toLowerCase().replace(/\s+/g, '-')}.jpg`, { type: 'image/jpeg' });
-      const reader = new FileReader();
-      reader.onload = () => {
-        onPhotoSelected(file, reader.result as string);
-        setIsProcessing(false);
-      };
-      reader.readAsDataURL(file);
-    } catch (e) {
-      console.error(e);
-      setErrorMessage('Could not load sample image');
       setIsProcessing(false);
     }
   };
@@ -163,31 +127,6 @@ export const PhotoUploader: React.FC<PhotoUploaderProps> = ({ onPhotoSelected })
           {errorMessage}
         </p>
       )}
-
-      {/* Quick Sample Photos for Testing */}
-      <div className="mt-6 text-center">
-        <p className="text-xs font-mono-code text-[#8DC63F] mb-3 uppercase tracking-wider">
-          Or try with a sample avatar:
-        </p>
-        <div className="flex items-center justify-center gap-3">
-          {SAMPLE_AVATARS.map((sample, idx) => (
-            <button
-              key={idx}
-              onClick={() => handleSampleSelect(sample.url, sample.name)}
-              className="group flex items-center gap-2 px-3 py-2 bg-[#003B1F] hover:bg-[#004D28] border border-[#8DC63F]/40 rounded-xl transition-all"
-            >
-              <img
-                src={sample.url}
-                alt={sample.name}
-                className="w-8 h-8 rounded-full object-cover border border-[#FFE600]"
-              />
-              <span className="text-xs font-sans-ui text-[#FAF8F5] group-hover:text-[#FFE600]">
-                {sample.name}
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
 
     </div>
   );

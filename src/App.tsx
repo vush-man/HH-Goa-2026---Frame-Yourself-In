@@ -111,7 +111,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#005C31] text-white font-sans-ui flex flex-col selection:bg-[#FF007A] selection:text-white pb-16 relative overflow-x-hidden">
+    <div className="min-h-screen bg-[#005C31] text-white font-sans-ui flex flex-col selection:bg-[#FF007A] selection:text-white pb-2 relative overflow-x-hidden">
       
       {/* Background Graphic Decor & Atmospheric Cyber Tropical Ambient */}
       <BackgroundDecorations />
@@ -271,9 +271,14 @@ export default function App() {
       )}
 
       {/* FOOTER */}
-      <footer className="mt-16 text-center text-xs font-mono-code text-[#8DC63F]/80 border-t border-[#8DC63F]/20 pt-6 px-4 relative z-10">
-        <p className="flex items-center justify-center gap-1">
-          Crafted for <strong className="text-[#FFE600]">HH Goa 2026</strong> Shortlisting Task • <Heart className="w-3.5 h-3.5 text-[#FF007A] fill-current inline" /> <a href="http://hhgoa.com/" target="_blank" rel="noreferrer" className="underline hover:text-white">hhgoa.com</a>
+      <footer className="mt-8 sm:mt-10 text-center text-[11px] sm:text-xs font-mono-code text-[#8DC63F]/90 border-t border-[#8DC63F]/20 pt-4 pb-3 px-4 relative z-10">
+        <p className="flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1 max-w-sm sm:max-w-none mx-auto leading-relaxed">
+          <span>Crafted for <strong className="text-[#FFE600] font-bold">HH Goa 2026</strong> Shortlisting Task</span>
+          <span className="hidden sm:inline">•</span>
+          <span className="inline-flex items-center gap-1">
+            <Heart className="w-3.5 h-3.5 text-[#FF007A] fill-current shrink-0" />
+            <a href="http://hhgoa.com/" target="_blank" rel="noreferrer" className="underline hover:text-white transition-colors">hhgoa.com</a>
+          </span>
         </p>
       </footer>
 
