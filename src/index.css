@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+@layer utilities {
+  .font-display {
+    font-family: 'Bodoni Moda', 'Playfair Display', Georgia, serif;
+    font-stretch: 75%;
+  }
+  .font-serif-bold {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 900;
+  }
+  .font-hand {
+    font-family: 'Fredoka', cursive, sans-serif;
+  }
+  .font-devanagari {
+    font-family: 'Rozha One', 'Tiro Devanagari Marathi', serif;
+  }
+  .font-mono-code {
+    font-family: 'JetBrains Mono', 'Space Mono', monospace;
+  }
+  .font-sans-ui {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  }
+}
+
+/* Custom Goan Tile Pattern & Aesthetics */
+.goan-tile-pattern {
+  background-color: #005C31;
+  background-image: radial-gradient(#8DC63F 1px, transparent 1px), radial-gradient(#FF007A 1px, #005C31 1px);
+  background-size: 20px 20px;
+  background-position: 0 0, 10px 10px;
+}
+
+.goan-border-strip {
+  background: repeating-linear-gradient(
+    90deg,
+    #8DC63F 0px, #8DC63F 12px,
+    #FF007A 12px, #FF007A 24px,
+    #FFE600 24px, #FFE600 36px
+  );
+}
+
+.shimmer-badge {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-badge::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    60deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.25) 50%,
+    transparent 70%
+  );
+  transform: rotate(30deg);
+  animation: shimmer 4s infinite linear;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%) rotate(30deg); }
+  100% { transform: translateX(100%) rotate(30deg); }
+}
+
+/* Hide scrollbars for clean UI */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+

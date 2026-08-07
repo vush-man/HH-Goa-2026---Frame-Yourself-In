@@ -1,0 +1,6 @@
+{
+  "name": "HH Goa 2026 — Frame Yourself In",
+  "description": "Official HH Goa 2026 PFP Frame and Builder Pass ID Card Generator with Goan design assets, instant canvas export, and X share flow.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
