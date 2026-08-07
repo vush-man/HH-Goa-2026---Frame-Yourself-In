@@ -33,6 +33,8 @@ export const CanvasEditor: React.FC<CanvasEditorProps> = ({
   const isDraggingRef = useRef(isDragging);
   isDraggingRef.current = isDragging;
 
+  const dragStartRef = useRef({ x: 0, y: 0 });
+
   // Native Canvas Dimensions (High Quality 1080p canvas)
   const canvasWidth = 1080;
   const canvasHeight = format === 'pfp' ? 1080 : 1350;
@@ -115,6 +117,24 @@ export const CanvasEditor: React.FC<CanvasEditorProps> = ({
         } else {
           isPinching = false;
         }
+      } else if (e.touches.length === 1) {
+        const touch = e.touches[0];
+        const coords = getCanvasCoords(canvas, touch.clientX, touch.clientY);
+        if (isPointInPhotoRegion(formatRef.current, coords.x, coords.y)) {
+          // Touch is on the photo -> Intercept to drag/pan photo
+          e.preventDefault();
+          isDraggingRef.current = true;
+          setIsDragging(true);
+          dragStartRef.current = {
+            x: touch.clientX - photoRef.current.panX,
+            y: touch.clientY - photoRef.current.panY,
+          };
+          setDragStart(dragStartRef.current);
+        } else {
+          // Touch is on the frame (outside photo) -> Allow native page scroll
+          isDraggingRef.current = false;
+          setIsDragging(false);
+        }
       }
     };
 
@@ -132,17 +152,32 @@ export const CanvasEditor: React.FC<CanvasEditorProps> = ({
         onPhotoChangeRef.current({ scale: newScale });
       } else if (e.touches.length === 1 && isDraggingRef.current) {
         e.preventDefault();
+        const touch = e.touches[0];
+        onPhotoChangeRef.current({
+          panX: touch.clientX - dragStartRef.current.x,
+          panY: touch.clientY - dragStartRef.current.y,
+        });
       }
+    };
+
+    const onNativeTouchEnd = () => {
+      isPinching = false;
+      isDraggingRef.current = false;
+      setIsDragging(false);
     };
 
     canvas.addEventListener('wheel', onNativeWheel, { passive: false });
     canvas.addEventListener('touchstart', onNativeTouchStart, { passive: false });
     canvas.addEventListener('touchmove', onNativeTouchMove, { passive: false });
+    canvas.addEventListener('touchend', onNativeTouchEnd, { passive: true });
+    canvas.addEventListener('touchcancel', onNativeTouchEnd, { passive: true });
 
     return () => {
       canvas.removeEventListener('wheel', onNativeWheel);
       canvas.removeEventListener('touchstart', onNativeTouchStart);
       canvas.removeEventListener('touchmove', onNativeTouchMove);
+      canvas.removeEventListener('touchend', onNativeTouchEnd);
+      canvas.removeEventListener('touchcancel', onNativeTouchEnd);
     };
   }, [canvasWidth, canvasHeight]);
 
@@ -178,36 +213,6 @@ export const CanvasEditor: React.FC<CanvasEditorProps> = ({
     isDraggingRef.current = false;
   };
 
-  // Touch Single-Finger Pan Logic
-  const handleTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
-    if (e.touches.length === 1) {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-
-      const touch = e.touches[0];
-      const coords = getCanvasCoords(canvas, touch.clientX, touch.clientY);
-      if (isPointInPhotoRegion(format, coords.x, coords.y)) {
-        setIsDragging(true);
-        isDraggingRef.current = true;
-        setDragStart({ x: touch.clientX - photo.panX, y: touch.clientY - photo.panY });
-      }
-    }
-  };
-
-  const handleTouchMove = (e: React.TouchEvent<HTMLCanvasElement>) => {
-    if (!isDragging || e.touches.length !== 1) return;
-    const touch = e.touches[0];
-    onPhotoChange({
-      panX: touch.clientX - dragStart.x,
-      panY: touch.clientY - dragStart.y,
-    });
-  };
-
-  const handleTouchEnd = () => {
-    setIsDragging(false);
-    isDraggingRef.current = false;
-  };
-
   return (
     <div className="flex flex-col items-center w-full">
       
@@ -229,10 +234,8 @@ export const CanvasEditor: React.FC<CanvasEditorProps> = ({
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-          className={`w-full h-auto rounded-2xl touch-none select-none block shadow-inner ${
+          style={{ touchAction: isDragging ? 'none' : 'pan-y' }}
+          className={`w-full h-auto rounded-2xl select-none block shadow-inner ${
             isDragging ? 'cursor-grabbing' : isHoveringPhoto ? 'cursor-grab' : 'cursor-default'
           }`}
         />
