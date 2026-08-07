@@ -6,8 +6,8 @@ import { CanvasRenderOptions, FrameFormat } from '../types';
 export function isPointInPhotoRegion(format: FrameFormat, x: number, y: number): boolean {
   if (format === 'pfp') {
     const photoCenterX = 540;
-    const photoCenterY = 515;
-    const radius = 390;
+    const photoCenterY = 490;
+    const radius = 380;
     const dx = x - photoCenterX;
     const dy = y - photoCenterY;
     return dx * dx + dy * dy <= radius * radius;
@@ -61,8 +61,8 @@ async function drawPfpFrame(
 
   // 2. Render User Photo inside central viewport
   const photoCenterX = w / 2;
-  const photoCenterY = 515;
-  const radius = 390; // 780px diameter frame
+  const photoCenterY = 490;
+  const radius = 380; // 760px diameter frame
 
   ctx.save();
   ctx.beginPath();
@@ -122,34 +122,42 @@ async function drawPfpFrame(
   ctx.restore();
 
   // 6. Draw Bottom Banner & Branding
-  drawHackerHouseBranding(ctx, w / 2, h - 112, 0.75);
+  drawHackerHouseBranding(ctx, w / 2, h - 145, 0.60);
 
   // 7. Footer Timestamp & Team Stamp
   ctx.save();
   if (profile?.teamName) {
     const teamStamp = `✦ SQUAD: ${profile.teamName.trim().toUpperCase()}`;
     ctx.font = 'bold 16px "JetBrains Mono", monospace';
-    const tWidth = ctx.measureText(teamStamp).width + 28;
+    const tWidth = ctx.measureText(teamStamp).width + 32;
+
+    ctx.save();
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.45)';
+    ctx.shadowBlur = 10;
+    ctx.shadowOffsetY = 4;
+
     ctx.fillStyle = '#FF007A';
     ctx.beginPath();
-    ctx.roundRect((w - tWidth) / 2, h - 54, tWidth, 26, 8);
+    ctx.roundRect((w - tWidth) / 2, h - 80, tWidth, 30, 8);
     ctx.fill();
 
     ctx.strokeStyle = '#FFE600';
-    ctx.lineWidth = 1.5;
+    ctx.lineWidth = 2;
     ctx.stroke();
+    ctx.restore();
 
     ctx.fillStyle = '#FFE600';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(teamStamp, w / 2, h - 41);
+    ctx.font = 'bold 16px "JetBrains Mono", monospace';
+    ctx.fillText(teamStamp, w / 2, h - 65);
   }
 
   ctx.fillStyle = '#FAF8F5';
   ctx.font = 'bold 18px "JetBrains Mono", monospace';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'alphabetic';
-  ctx.fillText('GOA, INDIA  •  28 - 31 OCT 2026', w / 2, profile?.teamName ? h - 14 : h - 26);
+  ctx.fillText('GOA, INDIA  •  28 - 31 OCT 2026', w / 2, profile?.teamName ? h - 20 : h - 34);
   ctx.restore();
 
   // 8. Optional Twitter Circle Preview Mask (for editor view)
@@ -509,38 +517,32 @@ function drawHackerHouseBranding(
   ctx.textBaseline = 'middle';
 
   // Draw "HACKER"
-  ctx.fillText('HACKER', 0, -55);
+  ctx.fillText('HACKER', 0, -50);
   // Draw "HOUSE"
   ctx.fillText('HOUSE', 0, 45);
 
-  // 2. Overlaid "गोवा" Devanagari Hot Pink Badge right in center overlap!
+  // 2. Overlaid "गोवा" Devanagari Floating Text (Matching site logo: Pink text with Yellow outline, no background box)
   ctx.save();
   ctx.rotate(-0.08); // Slight stylish angle
 
-  const badgeW = 220;
-  const badgeH = 100;
-  const badgeX = -badgeW / 2;
-  const badgeY = -badgeH / 2;
-
-  // Pink Badge Background with Yellow Outline
-  ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
-  ctx.shadowBlur = 16;
-
-  ctx.fillStyle = '#FF007A';
-  ctx.beginPath();
-  ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 20);
-  ctx.fill();
-
-  ctx.strokeStyle = '#FFE600';
-  ctx.lineWidth = 6;
-  ctx.stroke();
-
-  // Devanagari "गोवा" text in yellow with pink stroke
-  ctx.fillStyle = '#FFE600';
-  ctx.font = 'bold 78px "Rozha One", "Tiro Devanagari Marathi", serif';
+  ctx.font = 'bold 95px "Rozha One", "Tiro Devanagari Marathi", "Noto Sans Devanagari", serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText('गोवा', 0, 4);
+
+  // Drop shadow for crisp contrast
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
+  ctx.shadowBlur = 12;
+  ctx.shadowOffsetY = 4;
+
+  // Yellow stroke outline
+  ctx.strokeStyle = '#FFE600';
+  ctx.lineWidth = 14;
+  ctx.lineJoin = 'round';
+  ctx.strokeText('गोवा', 0, 0);
+
+  // Hot pink text fill
+  ctx.fillStyle = '#FF007A';
+  ctx.fillText('गोवा', 0, 0);
 
   ctx.restore();
 

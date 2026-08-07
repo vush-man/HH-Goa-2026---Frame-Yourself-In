@@ -28,12 +28,12 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ onReset, hasPhoto }) => {
         </div>
 
         {/* Action Controls */}
-        <div className="flex items-center space-x-2 sm:space-x-4">
+        <div className="flex items-center gap-2 sm:gap-3">
           <a
             href="http://hhgoa.com/"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-[#004726] hover:bg-[#00381e] text-[#FAF8F5] text-xs font-mono-code font-medium border border-[#8DC63F]/40 transition-colors"
+            className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg bg-[#004726] hover:bg-[#00381e] text-[#FAF8F5] text-[11px] sm:text-xs font-mono-code font-medium border border-[#8DC63F]/40 transition-colors"
           >
             <span>hhgoa.com</span>
             <ExternalLink className="w-3.5 h-3.5 text-[#FFE600]" />
@@ -42,10 +42,10 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ onReset, hasPhoto }) => {
           {hasPhoto && onReset && (
             <button
               onClick={onReset}
-              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-[#FF007A] hover:bg-[#d90068] text-white text-xs font-bold font-mono-code shadow-md transition-transform active:scale-95"
+              className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg bg-[#FF007A] hover:bg-[#d90068] text-white text-[11px] sm:text-xs font-bold font-mono-code border border-[#FFE600]/40 shadow-md transition-all active:scale-95 cursor-pointer whitespace-nowrap"
             >
-              <RefreshCw className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Start Over</span>
+              <RefreshCw className="w-3.5 h-3.5 text-[#FFE600]" />
+              <span>Start Over</span>
             </button>
           )}
         </div>

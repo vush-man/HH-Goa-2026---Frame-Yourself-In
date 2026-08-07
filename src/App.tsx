@@ -8,6 +8,7 @@ import { FormatPicker } from './components/FormatPicker';
 import { PhotoUploader } from './components/PhotoUploader';
 import { CanvasEditor } from './components/CanvasEditor';
 import { BuilderForm } from './components/BuilderForm';
+import { PfpForm } from './components/PfpForm';
 import { ResultModal } from './components/ResultModal';
 import { BackgroundDecorations } from './components/BackgroundDecorations';
 import { Sparkles, ArrowRight, Image as ImageIcon, Wand2, ShieldCheck, Heart } from 'lucide-react';
@@ -218,28 +219,8 @@ export default function App() {
                 /* Builder Pass Inline Fields */
                 <BuilderForm profile={profile} onChange={handleProfileChange} />
               ) : (
-                /* PFP Frame Info Card */
-                <div className="bg-[#003B1F] p-6 rounded-3xl border-2 border-[#8DC63F]/40 shadow-xl space-y-4 text-left">
-                  <div className="flex items-center gap-2 text-[#FFE600] font-display font-bold text-lg border-b border-[#8DC63F]/30 pb-3">
-                    <Sparkles className="w-5 h-5 text-[#FF007A]" />
-                    PFP Frame Overlay Tips
-                  </div>
-
-                  <ul className="space-y-3 font-sans-ui text-sm text-[#FAF8F5]/90">
-                    <li className="flex items-start gap-2.5">
-                      <ShieldCheck className="w-5 h-5 text-[#8DC63F] shrink-0 mt-0.5" />
-                      <span><strong>Optimized for X (Twitter):</strong> Toggle the "Circle Crop" mask above to ensure your face sits squarely in X's circular profile avatar.</span>
-                    </li>
-                    <li className="flex items-start gap-2.5">
-                      <ShieldCheck className="w-5 h-5 text-[#8DC63F] shrink-0 mt-0.5" />
-                      <span><strong>Drag & Zoom:</strong> Click and drag anywhere on the photo to adjust framing. Scroll or use the slider to scale.</span>
-                    </li>
-                    <li className="flex items-start gap-2.5">
-                      <ShieldCheck className="w-5 h-5 text-[#8DC63F] shrink-0 mt-0.5" />
-                      <span><strong>Client-Side Engine:</strong> Instant rendering with zero server delays or quality loss.</span>
-                    </li>
-                  </ul>
-                </div>
+                /* PFP Frame Squad Name & Info */
+                <PfpForm profile={profile} onChange={handleProfileChange} />
               )}
 
               {/* Upload Another Photo Button */}

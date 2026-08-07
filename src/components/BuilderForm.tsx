@@ -138,7 +138,7 @@ export const BuilderForm: React.FC<BuilderFormProps> = ({ profile, onChange }) =
       </div>
 
       {/* 2. Team Name Input */}
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         <label className="block text-xs font-mono-code font-bold text-[#FAF8F5] tracking-wider uppercase flex items-center justify-between">
           <span className="flex items-center gap-1.5">
             <Users className="w-3.5 h-3.5 text-[#FFE600]" />
@@ -147,28 +147,23 @@ export const BuilderForm: React.FC<BuilderFormProps> = ({ profile, onChange }) =
           <span className="text-[10px] font-normal text-[#8DC63F]">Shown on Builder Pass</span>
         </label>
         
-        <div className="bg-[#002413] p-3.5 sm:p-4 rounded-2xl border-2 border-[#8DC63F] shadow-[0_4px_0_#00140a] space-y-2.5">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-mono-code font-bold text-[#FFE600] uppercase tracking-wider flex items-center gap-1.5">
-              <Users className="w-3.5 h-3.5 text-[#FFE600]" />
-              Squad Tag
-            </span>
-            {profile.teamName && profile.teamName.trim() !== '' && (
-              <span className="px-2.5 py-1 bg-[#FFE600] text-[#121212] font-mono-code font-black text-xs rounded-xl border-2 border-black shadow-[0_2px_0_#000] uppercase tracking-wide flex items-center gap-1 truncate max-w-[150px] sm:max-w-xs">
-                ✦ SQUAD: {profile.teamName.trim()}
-              </span>
-            )}
-          </div>
+        <input
+          type="text"
+          value={profile.teamName || ''}
+          onChange={handleTeamNameChange}
+          placeholder="e.g. CYBER PALM LABS or TEAM ALPHA"
+          maxLength={30}
+          className="w-full px-4 py-3 bg-[#002413] border-2 border-[#8DC63F]/60 rounded-xl text-white font-mono-code font-bold text-sm sm:text-base placeholder:text-white/30 focus:outline-none focus:border-[#FFE600] focus:ring-2 focus:ring-[#FFE600]/30 transition-all shadow-inner uppercase"
+        />
 
-          <input
-            type="text"
-            value={profile.teamName || ''}
-            onChange={handleTeamNameChange}
-            placeholder="e.g. CYBER PALM LABS or TEAM ALPHA"
-            maxLength={30}
-            className="w-full px-4 py-3 bg-[#003B1F] border-2 border-[#8DC63F]/60 rounded-xl text-white font-mono-code font-bold text-sm sm:text-base placeholder:text-white/30 focus:outline-none focus:border-[#FFE600] focus:ring-2 focus:ring-[#FFE600]/30 transition-all shadow-inner uppercase"
-          />
-        </div>
+        {profile.teamName && profile.teamName.trim() !== '' && (
+          <div className="pt-1 flex items-center gap-2 text-xs font-mono-code text-[#8DC63F]">
+            <span>Live Badge Preview:</span>
+            <span className="px-2.5 py-1 bg-[#FF007A] text-[#FFE600] font-mono-code font-bold text-xs rounded-lg border border-[#FFE600] shadow-[0_2px_6px_rgba(0,0,0,0.4)] uppercase tracking-wide">
+              ✦ SQUAD: {profile.teamName.trim()}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* 2. Stack & Role Input */}

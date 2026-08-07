@@ -86,6 +86,7 @@ flowchart TD
 │   │   ├── CanvasEditor.tsx            # Live canvas preview & transform controls
 │   │   ├── FormatPicker.tsx            # Toggle between PFP Frame (1:1) & VIP Pass (4:5)
 │   │   ├── HeaderNav.tsx               # Top branding header navigation bar
+│   │   ├── PfpForm.tsx                 # Squad name editor & tips for PFP frame mode
 │   │   ├── PhotoUploader.tsx           # Drag-and-drop universal file uploader
 │   │   └── ResultModal.tsx             # Full-screen output preview & download modal
 │   ├── utils/

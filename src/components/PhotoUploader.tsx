@@ -106,7 +106,8 @@ export const PhotoUploader: React.FC<PhotoUploaderProps> = ({ onPhotoSelected })
                 DROP YOUR PHOTO HERE
               </h3>
               <p className="font-sans-ui text-sm sm:text-base text-[#FAF8F5]/90 mb-6 max-w-sm mx-auto">
-                Tap to upload or drag & drop. Supports <strong className="text-[#8DC63F]">all image formats</strong> (JPG, PNG, WEBP, HEIC, GIF, AVIF & more).
+                Tap to upload or drag & drop.<br />
+                Supports <strong className="text-[#8DC63F]">all image formats</strong>.
               </p>
 
               <button
