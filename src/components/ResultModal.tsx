@@ -104,7 +104,7 @@ export const ResultModal: React.FC<ResultModalProps> = ({ dataUrl, format, onClo
 
   // Construct clean pre-filled X (Twitter) post template URL without forcing link text
   const postCaption = `Framed myself in for Hacker House Goa 2026! 🌴🚀\n\n#FrameInGoa @247pmstudio`;
-  const twitterIntentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(postCaption)}`;
+  const twitterIntentUrl = `https://x.com/intent/post?text=${encodeURIComponent(postCaption)}`;
 
   // Hybrid Share handler (copies PNG blob to clipboard & handles share)
   const handleShareClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
