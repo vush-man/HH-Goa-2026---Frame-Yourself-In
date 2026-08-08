@@ -102,15 +102,45 @@ export const ResultModal: React.FC<ResultModalProps> = ({ dataUrl, format, onClo
     };
   }, [dataUrl, format]);
 
-  // Construct clean pre-filled X (Twitter) post template URL without forcing link text
-  const postCaption = `Framed myself in for Hacker House Goa 2026! 🌴🚀\n\n#FrameInGoa @247pmstudio`;
-  const twitterIntentUrl = `https://x.com/intent/post?text=${encodeURIComponent(postCaption)}`;
+  // Construct clean pre-filled X (Twitter) post template URL without leading space
+  const postCaption = `Framed myself in for Hacker House Goa 2026! 🌴🚀\n\n#FrameInGoa @247pmstudio`.trim();
+  const twitterIntentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(postCaption)}`;
 
-  // Hybrid Share handler (copies PNG blob to clipboard & handles share)
+  // Share to X handler: Uses native file share on mobile to send image + text directly to X app; opens X web intent on desktop while copying & downloading image
   const handleShareClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
-    // 1. Synchronously copy image PNG blob to system clipboard
+    const isMobile = typeof navigator !== 'undefined' && (
+      /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+      (navigator.maxTouchPoints > 0 && window.innerWidth < 768)
+    );
+
+    const blob = getPhotoBlob();
+    const filename = format === 'pfp' ? 'hh-goa-2026-pfp.png' : 'hh-goa-2026-pass.png';
+    const file = new File([blob], filename, { type: 'image/png' });
+
+    // On Mobile: Use native share sheet to send image file + caption directly to X app
+    if (
+      isMobile &&
+      typeof navigator !== 'undefined' &&
+      navigator.canShare &&
+      navigator.canShare({ files: [file] })
+    ) {
+      e.preventDefault();
+      try {
+        await navigator.share({
+          text: postCaption,
+          files: [file],
+        });
+        setShareSuccess(true);
+      } catch (err) {
+        console.log('Mobile native share canceled:', err);
+      }
+      return;
+    }
+
+    // On Desktop:
+    // Do NOT preventDefault! Let <a href={twitterIntentUrl} target="_blank"> open Twitter/X in a new tab naturally.
+    // Simultaneously copy image to clipboard and trigger download for convenience.
     try {
-      const blob = getPhotoBlob();
       if (navigator.clipboard && window.ClipboardItem) {
         await navigator.clipboard.write([
           new ClipboardItem({ 'image/png': blob }),
@@ -119,36 +149,10 @@ export const ResultModal: React.FC<ResultModalProps> = ({ dataUrl, format, onClo
         setTimeout(() => setCopyStatus('idle'), 3500);
       }
     } catch (err) {
-      console.log('Clipboard image copy on share:', err);
+      console.log('Desktop clipboard copy on share:', err);
     }
 
-    // 2. Automatically trigger PNG file download as fallback
     handleDownload();
-
-    // 3. Mobile native share check
-    if (
-      typeof navigator !== 'undefined' &&
-      navigator.canShare &&
-      typeof File !== 'undefined'
-    ) {
-      try {
-        const blob = getPhotoBlob();
-        const filename = format === 'pfp' ? 'hh-goa-2026-pfp.png' : 'hh-goa-2026-pass.png';
-        const file = new File([blob], filename, { type: 'image/png' });
-
-        if (navigator.canShare({ files: [file] })) {
-          e.preventDefault();
-          await navigator.share({
-            title: 'HH Goa 2026 — Frame Yourself In',
-            text: postCaption,
-            files: [file],
-          });
-          setShareSuccess(true);
-        }
-      } catch (err) {
-        console.log('Mobile native share dismissed:', err);
-      }
-    }
   };
 
   return (
@@ -233,7 +237,7 @@ export const ResultModal: React.FC<ResultModalProps> = ({ dataUrl, format, onClo
               PRO TIP
             </span>
             <p className="m-0 text-[11px] sm:text-xs text-[#FAF8F5]/90 font-medium leading-normal">
-              Clicking <strong className="text-[#FFE600] font-bold">Share to X</strong> downloads &amp; copies the graphic! Simply press <strong className="text-[#8DC63F] font-bold">Ctrl+V / Cmd+V</strong> in the X composer to paste your graphic directly.
+              On mobile, tapping <strong className="text-[#FFE600] font-bold">Share to X</strong> opens the X app directly with your graphic &amp; caption attached! On desktop, it downloads and copies the image to your clipboard.
             </p>
           </div>
 
