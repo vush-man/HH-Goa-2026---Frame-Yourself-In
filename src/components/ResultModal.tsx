@@ -104,7 +104,7 @@ export const ResultModal: React.FC<ResultModalProps> = ({ dataUrl, format, onClo
 
   // Construct clean pre-filled X (Twitter) post template URL without leading space
   const postCaption = `Framed myself in for Hacker House Goa 2026! 🌴🚀\n\n#FrameInGoa @247pmstudio`.trim();
-  const twitterIntentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(postCaption)}`;
+  const twitterIntentUrl = `https://x.com/intent/post?text=${encodeURIComponent(postCaption)}`;
 
   // Share to X handler: Uses native file share on mobile to send image + text directly to X app; opens X web intent on desktop while copying & downloading image
   const handleShareClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
