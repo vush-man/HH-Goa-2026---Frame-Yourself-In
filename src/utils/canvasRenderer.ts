@@ -300,9 +300,93 @@ async function drawBuilderPass(
 
   // 6. Lower Profile Specifications Card (Name, Title, Team, Stack)
   const cardW = w - 96;
-  const cardH = 440;
   const cardX = 48;
   const cardY = 800;
+
+  // Pre-calculate Stack / Role Tag wrapping to derive dynamic card height
+  const stack = (profile.stack || 'FULLSTACK • AI • WEB3').toUpperCase();
+  const maxStackWidth = cardW - 80;
+  ctx.font = '600 24px "Plus Jakarta Sans", sans-serif';
+
+  const wrapStackLines = (text: string, maxWidth: number): string[] => {
+    if (!text.trim()) return ['FULLSTACK • AI • WEB3'];
+
+    if (text.includes('•') || text.includes(',')) {
+      const rawTags = text.split(/•|,/).map(t => t.trim()).filter(Boolean);
+      const lines: string[] = [];
+      let currentLine = '';
+
+      for (const tag of rawTags) {
+        const testLine = currentLine ? `${currentLine} • ${tag}` : tag;
+        if (ctx.measureText(testLine).width <= maxWidth) {
+          currentLine = testLine;
+        } else {
+          if (currentLine) lines.push(currentLine);
+          if (ctx.measureText(tag).width > maxWidth) {
+            const words = tag.split(' ').filter(Boolean);
+            let wordLine = '';
+            for (const w of words) {
+              const testWordLine = wordLine ? `${wordLine} ${w}` : w;
+              if (ctx.measureText(testWordLine).width <= maxWidth) {
+                wordLine = testWordLine;
+              } else {
+                if (wordLine) lines.push(wordLine);
+                wordLine = w;
+              }
+            }
+            currentLine = wordLine;
+          } else {
+            currentLine = tag;
+          }
+        }
+      }
+      if (currentLine) lines.push(currentLine);
+      return lines.length > 0 ? lines : [text];
+    }
+
+    const words = text.split(' ').filter(Boolean);
+    const lines: string[] = [];
+    let currentLine = '';
+
+    for (const word of words) {
+      const testLine = currentLine ? `${currentLine} ${word}` : word;
+      if (ctx.measureText(testLine).width <= maxWidth) {
+        currentLine = testLine;
+      } else {
+        if (currentLine) lines.push(currentLine);
+        currentLine = word;
+      }
+    }
+    if (currentLine) lines.push(currentLine);
+    return lines.length > 0 ? lines : [text];
+  };
+
+  const stackLines = wrapStackLines(stack, maxStackWidth);
+  const lineSpacing = 32;
+  const stackTotalHeight = (stackLines.length - 1) * lineSpacing;
+
+  const teamName = profile.teamName ? profile.teamName.trim().toUpperCase() : '';
+  const title = (profile.title || 'GOA UNSTOPPABLE BUILDER').toUpperCase();
+
+  ctx.font = 'bold 20px "JetBrains Mono", monospace';
+  const titleText = `★ ${title} ★`;
+  const titleWidth = ctx.measureText(titleText).width + 36;
+  const titlePillW = Math.min(titleWidth, cardW - 80);
+
+  let contentOffset = 0;
+  if (teamName) {
+    const teamText = `✦ SQUAD: ${teamName}`;
+    ctx.font = 'bold 18px "JetBrains Mono", monospace';
+    const teamWidth = ctx.measureText(teamText).width + 36;
+    const teamPillW = Math.min(teamWidth, cardW - 80);
+    const teamX = cardX + 40 + titlePillW + 16;
+
+    if (teamX + teamPillW > cardX + cardW - 40) {
+      contentOffset = 48; // shift stack section down
+    }
+  }
+
+  const cardH = Math.max(440, 435 + contentOffset + stackTotalHeight);
 
   ctx.save();
   ctx.shadowColor = 'rgba(0,0,0,0.35)';
@@ -319,10 +403,8 @@ async function drawBuilderPass(
   ctx.fillRect(cardX, cardY, cardW, 8);
 
   // Card Content
-  const name = (profile.name || 'ANONYMOUS HACKER').toUpperCase();
-  const teamName = profile.teamName ? profile.teamName.trim().toUpperCase() : '';
-  const stack = (profile.stack || 'FULLSTACK • AI • WEB3').toUpperCase();
-  const title = (profile.title || 'GOA UNSTOPPABLE BUILDER').toUpperCase();
+  const rawName = profile.name || 'ANONYMOUS HACKER';
+  const name = rawName.trim().startsWith('@') ? rawName.trim() : rawName.toUpperCase();
   const passId = profile.passId || '#HH-GOA-2026';
 
   // A. Builder Name
@@ -333,11 +415,6 @@ async function drawBuilderPass(
   ctx.fillText(name, cardX + 40, cardY + 65, cardW - 80);
 
   // B. Auto-Derived Title Badge Pill & Team Badge Pill
-  ctx.font = 'bold 20px "JetBrains Mono", monospace';
-  const titleText = `★ ${title} ★`;
-  const titleWidth = ctx.measureText(titleText).width + 36;
-  const titlePillW = Math.min(titleWidth, cardW - 80);
-  
   ctx.save();
   // Title Badge Shadow
   ctx.fillStyle = '#121212';
@@ -363,8 +440,6 @@ async function drawBuilderPass(
   ctx.fillText(titleText, cardX + 58, cardY + 112, titlePillW - 36);
   ctx.restore();
 
-  let contentOffset = 0;
-
   if (teamName) {
     const teamText = `✦ SQUAD: ${teamName}`;
     ctx.font = 'bold 18px "JetBrains Mono", monospace';
@@ -374,11 +449,9 @@ async function drawBuilderPass(
     let teamX = cardX + 40 + titlePillW + 16;
     let teamY = cardY + 92;
 
-    // Wrap to next line if it exceeds card width
     if (teamX + teamPillW > cardX + cardW - 40) {
       teamX = cardX + 40;
       teamY = cardY + 142;
-      contentOffset = 48; // shift stack down
     }
 
     ctx.save();
@@ -413,29 +486,35 @@ async function drawBuilderPass(
   ctx.font = 'bold 19px "JetBrains Mono", monospace';
   ctx.fillText('PRIMARY STACK & ROLE:', cardX + 40, cardY + 182 + contentOffset);
 
-  ctx.font = '600 26px "Plus Jakarta Sans", sans-serif';
+  ctx.font = '600 24px "Plus Jakarta Sans", sans-serif';
   ctx.fillStyle = profile.theme === 'sunset-yellow' ? '#005C31' : '#FF007A';
-  ctx.fillText(stack, cardX + 40, cardY + 220 + contentOffset, cardW - 80);
+  ctx.textBaseline = 'alphabetic';
+
+  stackLines.forEach((lineText, idx) => {
+    ctx.fillText(lineText, cardX + 40, cardY + 218 + contentOffset + (idx * lineSpacing));
+  });
 
   // D. Divider Line
   ctx.strokeStyle = 'rgba(0, 0, 0, 0.15)';
   ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.moveTo(cardX + 40, cardY + 260 + contentOffset);
-  ctx.lineTo(cardX + cardW - 40, cardY + 260 + contentOffset);
+  const dividerY = cardY + 252 + contentOffset + stackTotalHeight;
+  ctx.moveTo(cardX + 40, dividerY);
+  ctx.lineTo(cardX + cardW - 40, dividerY);
   ctx.stroke();
 
   // E. Footer Pass Specs & Barcode
+  const footerIdY = dividerY + 44;
   ctx.font = 'bold 22px "JetBrains Mono", monospace';
   ctx.fillStyle = cardText;
-  ctx.fillText(`ID: ${passId}`, cardX + 40, cardY + 310 + contentOffset);
+  ctx.fillText(`ID: ${passId}`, cardX + 40, footerIdY);
 
   ctx.font = '18px "JetBrains Mono", monospace';
   ctx.fillStyle = profile.theme === 'sunset-yellow' ? '#005C31' : '#006838';
-  ctx.fillText('GOA, INDIA • 28 - 31 OCT 2026', cardX + 40, cardY + 350 + contentOffset);
+  ctx.fillText('GOA, INDIA • 28 - 31 OCT 2026', cardX + 40, footerIdY + 38);
 
   // Draw Procedural Authentic Barcode on Right of Card
-  drawBarcode(ctx, cardX + cardW - 200, cardY + 285 + contentOffset, 160, 70, cardText);
+  drawBarcode(ctx, cardX + cardW - 200, footerIdY - 25, 160, 70, cardText);
   ctx.restore();
 
   // 7. Bottom Branding Line

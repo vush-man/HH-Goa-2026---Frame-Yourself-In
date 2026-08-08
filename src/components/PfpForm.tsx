@@ -62,10 +62,6 @@ export const PfpForm: React.FC<PfpFormProps> = ({ profile, onChange }) => {
             <ShieldCheck className="w-5 h-5 text-[#8DC63F] shrink-0 mt-0.5" />
             <span><strong>Drag & Zoom:</strong> Click and drag anywhere on the photo to adjust framing. Scroll or use the slider to scale.</span>
           </li>
-          <li className="flex items-start gap-2.5">
-            <ShieldCheck className="w-5 h-5 text-[#8DC63F] shrink-0 mt-0.5" />
-            <span><strong>Client-Side Engine:</strong> Instant rendering with zero server delays or quality loss.</span>
-          </li>
         </ul>
       </div>
     </div>

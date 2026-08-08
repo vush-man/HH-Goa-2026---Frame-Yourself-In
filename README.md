@@ -9,11 +9,14 @@
 
 - 📸 **Universal Image Compatibility**: Full support for JPG, PNG, WEBP, AVIF, GIF, and native iPhone **HEIC/HEIF** format conversion.
 - 🎨 **Real-Time Canvas Compositing Engine**: Zero latency client-side rendering with sub-pixel image positioning, rotation, zoom, brightness, contrast, and color adjustments.
-- 🏷️ **Smart Builder Title Generator**: Auto-detects tech stack keywords (AI/ML, Web3, Frontend, Backend, DevOps, Mobile, Design) to generate legendary titles with a **1-click Re-Roll engine**.
+- 🔤 **Smart Handle & Case Formatting**: Automatic uppercase transformation by default, with support for user-defined casing when an `@` handle prefix is typed (e.g., `@alexrivers`).
+- 🏷️ **Custom & Smart Builder Title Generator**: Auto-detects tech stack keywords (AI/ML, Web3, Frontend, Backend, DevOps, Mobile, Design) with a 1-click Re-Roll engine, while allowing full custom title editing.
+- 🧩 **Dynamic Multi-Line Stack Wrapping**: Smart canvas text wrapping algorithm that formats long stack lists into clean, auto-spaced lines without horizontal squeezing or clipping.
 - 👥 **Squad Tag & Custom Metadata**: Embed custom team names, tech badges, unique Pass IDs, and security verification stamps into your builder badge.
 - 📐 **Dual Format Support**:
   - **PFP Frame (1:1)**: Perfect overlay avatar frame tailored for X (Twitter), LinkedIn, and Discord.
   - **Builder Pass (4:5)**: VIP Event badge complete with dynamic vector branding, QR code, barcode, tech stack pills, and Goa tropical aesthetic.
+- 💡 **Integrated UX Tips Cards**: Contextual tips cards for both Builder Pass and PFP Frame modes guiding users on framing, handle formatting, and title customization.
 - 🌴 **Cyber-Tropical Aesthetic**: Vibrant Neo-Brutalist green (`#005C31`), electric yellow (`#FFE600`), and tropical pink (`#FF007A`) design system featuring an animated floating Devanagari **"गोवा"** motif.
 - 💾 **Instant Ultra-HD Export**: Export crisp 2000×2000px (PFP) or 1600×2000px (Pass) PNG files ready for download or social media sharing.
 

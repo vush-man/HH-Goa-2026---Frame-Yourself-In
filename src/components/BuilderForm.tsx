@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { BuilderProfile, BUILDER_STACK_SUGGESTIONS } from '../types';
 import { generateBuilderTitle } from '../utils/builderTitles';
-import { Sparkles, Dices, Layers, User, Users, Tag, Palette, Plus } from 'lucide-react';
+import { Sparkles, Dices, Layers, User, Users, Tag, Palette, Plus, ShieldCheck } from 'lucide-react';
 
 interface BuilderFormProps {
   profile: BuilderProfile;
@@ -13,16 +13,21 @@ export const BuilderForm: React.FC<BuilderFormProps> = ({ profile, onChange }) =
   const [userCustomTags, setUserCustomTags] = useState<string[]>([]);
   
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange({ name: e.target.value });
+    const val = e.target.value;
+    if (val.trim().startsWith('@')) {
+      onChange({ name: val });
+    } else {
+      onChange({ name: val.toUpperCase() });
+    }
   };
 
   const handleTeamNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange({ teamName: e.target.value });
+    onChange({ teamName: e.target.value.toUpperCase() });
   };
 
   const handleStackChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newStack = e.target.value;
-    const derivedTitle = generateBuilderTitle(newStack);
+    const newStack = e.target.value.toUpperCase();
+    const derivedTitle = generateBuilderTitle(newStack).toUpperCase();
     onChange({
       stack: newStack,
       title: derivedTitle,
@@ -30,7 +35,7 @@ export const BuilderForm: React.FC<BuilderFormProps> = ({ profile, onChange }) =
   };
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange({ title: e.target.value });
+    onChange({ title: e.target.value.toUpperCase() });
   };
 
   const handleTagClick = (tag: string) => {
@@ -91,11 +96,13 @@ export const BuilderForm: React.FC<BuilderFormProps> = ({ profile, onChange }) =
   const allTags = [...userCustomTags, ...BUILDER_STACK_SUGGESTIONS];
 
   return (
-    <div className="w-full max-w-lg mx-auto bg-[#003B1F] p-5 sm:p-6 rounded-3xl border-2 border-[#8DC63F] shadow-[0_8px_0_#001e0e] space-y-5.5 relative overflow-hidden">
-      {/* Decorative top accent glow */}
-      <div className="absolute -top-12 -right-12 w-32 h-32 bg-[#FF007A]/20 blur-2xl rounded-full pointer-events-none" />
-      
-      {/* Section Header */}
+    <div className="space-y-6 text-left">
+      {/* Input Form Card */}
+      <div className="w-full max-w-lg mx-auto bg-[#003B1F] p-5 sm:p-6 rounded-3xl border-2 border-[#8DC63F] shadow-[0_8px_0_#001e0e] space-y-5.5 relative overflow-hidden">
+        {/* Decorative top accent glow */}
+        <div className="absolute -top-12 -right-12 w-32 h-32 bg-[#FF007A]/20 blur-2xl rounded-full pointer-events-none" />
+        
+        {/* Section Header */}
       <div className="flex items-center justify-between border-b-2 border-[#8DC63F]/40 pb-3.5">
         <div className="flex items-center gap-2">
           <span className="bg-[#FF007A] text-white p-1.5 rounded-xl border border-black shadow-[0_2px_0_#121212]">
@@ -128,11 +135,11 @@ export const BuilderForm: React.FC<BuilderFormProps> = ({ profile, onChange }) =
         <div className="relative">
           <input
             type="text"
-            value={profile.name}
+            value={profile.name || ''}
             onChange={handleNameChange}
-            placeholder="e.g. Alex Rivers or @alexrivers"
+            placeholder="e.g. ALEX RIVERS or @alexrivers"
             maxLength={30}
-            className="w-full px-4 py-3 bg-[#002413] border-2 border-[#8DC63F]/60 rounded-xl text-white font-sans-ui font-bold text-sm sm:text-base placeholder:text-white/30 focus:outline-none focus:border-[#FFE600] focus:ring-2 focus:ring-[#FFE600]/30 transition-all shadow-inner"
+            className={`w-full px-4 py-3 bg-[#002413] border-2 border-[#8DC63F]/60 rounded-xl text-white font-sans-ui font-bold text-sm sm:text-base placeholder:text-white/30 focus:outline-none focus:border-[#FFE600] focus:ring-2 focus:ring-[#FFE600]/30 transition-all shadow-inner ${(profile.name || '').trim().startsWith('@') ? '' : 'uppercase'}`}
           />
         </div>
       </div>
@@ -178,11 +185,11 @@ export const BuilderForm: React.FC<BuilderFormProps> = ({ profile, onChange }) =
         
         <input
           type="text"
-          value={profile.stack}
+          value={profile.stack || ''}
           onChange={handleStackChange}
-          placeholder="e.g. LLM, Agentic AI, Crypto, Rust, React"
-          maxLength={55}
-          className="w-full px-4 py-3 bg-[#002413] border-2 border-[#8DC63F]/60 rounded-xl text-white font-sans-ui font-bold text-sm sm:text-base placeholder:text-white/30 focus:outline-none focus:border-[#FFE600] focus:ring-2 focus:ring-[#FFE600]/30 transition-all shadow-inner"
+          placeholder="e.g. LLM, AGENTIC AI, CRYPTO, RUST, REACT"
+          maxLength={70}
+          className="w-full px-4 py-3 bg-[#002413] border-2 border-[#8DC63F]/60 rounded-xl text-white font-sans-ui font-bold text-sm sm:text-base placeholder:text-white/30 focus:outline-none focus:border-[#FFE600] focus:ring-2 focus:ring-[#FFE600]/30 transition-all shadow-inner uppercase"
         />
       </div>
 
@@ -198,18 +205,18 @@ export const BuilderForm: React.FC<BuilderFormProps> = ({ profile, onChange }) =
 
         <div className="bg-[#002413] p-3.5 sm:p-4 rounded-2xl border-2 border-[#8DC63F] shadow-[0_4px_0_#00140a] space-y-3">
           {/* Type Custom Tag Input Form */}
-          <form onSubmit={handleAddCustomTag} className="flex gap-2">
+          <form onSubmit={handleAddCustomTag} className="flex gap-2 items-center w-full">
             <input
               type="text"
               value={customTagInput}
-              onChange={(e) => setCustomTagInput(e.target.value)}
-              placeholder="Type tag & press Enter (e.g. PyTorch)..."
+              onChange={(e) => setCustomTagInput(e.target.value.toUpperCase())}
+              placeholder="Type tag (e.g. PYTORCH)..."
               maxLength={25}
-              className="flex-1 px-4 py-2.5 bg-[#003B1F] border-2 border-[#8DC63F]/60 focus:border-[#FFE600] rounded-xl text-white font-mono-code text-xs sm:text-sm font-bold focus:outline-none placeholder:text-white/40 shadow-inner"
+              className="flex-1 min-w-0 px-3 sm:px-4 py-2.5 bg-[#003B1F] border-2 border-[#8DC63F]/60 focus:border-[#FFE600] rounded-xl text-white font-mono-code text-xs sm:text-sm font-bold focus:outline-none placeholder:text-white/40 shadow-inner uppercase"
             />
             <button
               type="submit"
-              className="px-4 py-2.5 bg-[#FF007A] hover:bg-[#e0006b] text-[#f9f908] font-mono-code text-xs font-black rounded-xl border-2 border-black shadow-[0_2px_0_#000] active:translate-y-0.5 active:shadow-none transition-all flex items-center gap-1 cursor-pointer shrink-0"
+              className="px-3 sm:px-4 py-2.5 bg-[#FF007A] hover:bg-[#e0006b] text-[#f9f908] font-mono-code text-xs font-black rounded-xl border-2 border-black shadow-[0_2px_0_#000] active:translate-y-0.5 active:shadow-none transition-all flex items-center gap-1 cursor-pointer shrink-0"
             >
               <Plus className="w-4 h-4 stroke-[3]" />
               Add
@@ -306,6 +313,34 @@ export const BuilderForm: React.FC<BuilderFormProps> = ({ profile, onChange }) =
             );
           })}
         </div>
+      </div>
+      </div>
+
+      {/* Builder Pass Tips Card (Outside Input Form) */}
+      <div className="w-full max-w-lg mx-auto bg-[#003B1F] p-5 sm:p-6 rounded-3xl border-2 border-[#8DC63F]/40 shadow-xl space-y-4">
+        <div className="flex items-center gap-2 text-[#FFE600] font-display font-bold text-lg border-b border-[#8DC63F]/30 pb-3">
+          <Sparkles className="w-5 h-5 text-[#FF007A]" />
+          Builder Pass Tips
+        </div>
+
+        <ul className="space-y-3 font-sans-ui text-sm text-[#FAF8F5]/90">
+          <li className="flex items-start gap-2.5">
+            <ShieldCheck className="w-5 h-5 text-[#8DC63F] shrink-0 mt-0.5" />
+            <span><strong>X Handle Formatting:</strong> Use <code>@</code> at the start of your name (e.g. <code>@alexrivers</code>) to preserve mixed case formatting on your pass!</span>
+          </li>
+          <li className="flex items-start gap-2.5">
+            <ShieldCheck className="w-5 h-5 text-[#8DC63F] shrink-0 mt-0.5" />
+            <span><strong>Custom Badge Title:</strong> Titles are auto-generated based on your tech stack, but you can also edit or type your own custom badge title!</span>
+          </li>
+          <li className="flex items-start gap-2.5">
+            <ShieldCheck className="w-5 h-5 text-[#8DC63F] shrink-0 mt-0.5" />
+            <span><strong>Auto Stack Layout:</strong> Select or type multiple stack tags — long stack lists automatically wrap into clean lines on your pass.</span>
+          </li>
+          <li className="flex items-start gap-2.5">
+            <ShieldCheck className="w-5 h-5 text-[#8DC63F] shrink-0 mt-0.5" />
+            <span><strong>Drag & Zoom Avatar:</strong> Click and drag anywhere on your uploaded photo to position your avatar cleanly inside the pass frame.</span>
+          </li>
+        </ul>
       </div>
 
     </div>
