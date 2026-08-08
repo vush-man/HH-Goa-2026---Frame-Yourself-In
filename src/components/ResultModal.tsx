@@ -108,6 +108,10 @@ export const ResultModal: React.FC<ResultModalProps> = ({ dataUrl, format, onClo
 
   // Share to X handler: Uses native file share on mobile to send image + text directly to X app; opens X web intent on desktop while copying & downloading image
   const handleShareClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    // Show copy notification banner immediately
+    setCopyStatus('copied-image');
+    setTimeout(() => setCopyStatus('idle'), 8000);
+
     const isMobile = typeof navigator !== 'undefined' && (
       /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
       (navigator.maxTouchPoints > 0 && window.innerWidth < 768)
@@ -138,15 +142,12 @@ export const ResultModal: React.FC<ResultModalProps> = ({ dataUrl, format, onClo
     }
 
     // On Desktop:
-    // Do NOT preventDefault! Let <a href={twitterIntentUrl} target="_blank"> open Twitter/X in a new tab naturally.
-    // Simultaneously copy image to clipboard and trigger download for convenience.
+    // Copy image to clipboard
     try {
       if (navigator.clipboard && window.ClipboardItem) {
         await navigator.clipboard.write([
           new ClipboardItem({ 'image/png': blob }),
         ]);
-        setCopyStatus('copied-image');
-        setTimeout(() => setCopyStatus('idle'), 3500);
       }
     } catch (err) {
       console.log('Desktop clipboard copy on share:', err);
@@ -208,9 +209,26 @@ export const ResultModal: React.FC<ResultModalProps> = ({ dataUrl, format, onClo
             onClick={handleShareClick}
             className="w-full py-3 sm:py-3.5 px-4 sm:px-6 bg-[#FF007A] hover:bg-[#d90068] text-white font-mono-code font-bold text-xs sm:text-base rounded-2xl shadow-[0_5px_0_#80003d] sm:shadow-[0_6px_0_#80003d] border-2 border-[#121212] flex items-center justify-center gap-2 sm:gap-2.5 transition-all transform active:translate-y-1 active:shadow-none no-underline"
           >
-            <Share2 className="w-4 h-4 sm:w-5 sm:h-5 text-[#FFE600]" />
-            SHARE TO X (#FrameInGoa)
+            {copyStatus === 'copied-image' ? (
+              <>
+                <Check className="w-4 h-4 sm:w-5 sm:h-5 text-[#FFE600] stroke-[3]" />
+                <span>IMAGE COPIED TO CLIPBOARD!</span>
+              </>
+            ) : (
+              <>
+                <Share2 className="w-4 h-4 sm:w-5 sm:h-5 text-[#FFE600]" />
+                <span>SHARE TO X · #FrameInGoa</span>
+              </>
+            )}
           </a>
+
+          {/* Desktop Image Copied Alert Banner */}
+          {copyStatus === 'copied-image' && (
+            <div className="bg-[#FFE600] text-[#121212] px-3.5 py-3 rounded-2xl font-mono-code font-bold text-xs sm:text-sm flex items-center justify-center gap-2.5 shadow-xl border-2 border-[#121212] animate-in fade-in zoom-in-95 duration-200">
+              <Check className="w-5 h-5 text-[#FF007A] shrink-0 stroke-[3]" />
+              <span>Image copied &amp; downloaded! Press <strong>Ctrl+V / Cmd+V</strong> in X to paste.</span>
+            </div>
+          )}
 
           {/* Secondary Action: Copy Link */}
           <button
@@ -237,7 +255,9 @@ export const ResultModal: React.FC<ResultModalProps> = ({ dataUrl, format, onClo
               PRO TIP
             </span>
             <p className="m-0 text-[11px] sm:text-xs text-[#FAF8F5]/90 font-medium leading-normal">
-              On mobile, tapping <strong className="text-[#FFE600] font-bold">Share to X</strong> opens the X app directly with your graphic &amp; caption attached! On desktop, it downloads and copies the image to your clipboard.
+              On mobile, tapping <strong className="text-[#FFE600] font-bold">Share to X</strong> opens your native share menu so you can select the X app with your graphic attached!
+              <br className="my-1 block" />
+              On desktop, it opens X in a new tab, downloads your graphic, and copies the image to your clipboard (press <strong className="text-[#8DC63F] font-bold">Ctrl+V / Cmd+V</strong> to paste).
             </p>
           </div>
 
