@@ -108,10 +108,6 @@ export const ResultModal: React.FC<ResultModalProps> = ({ dataUrl, format, onClo
 
   // Share to X handler: Uses native file share on mobile to send image + text directly to X app; opens X web intent on desktop while copying & downloading image
   const handleShareClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
-    // Show copy notification banner immediately
-    setCopyStatus('copied-image');
-    setTimeout(() => setCopyStatus('idle'), 8000);
-
     const isMobile = typeof navigator !== 'undefined' && (
       /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
       (navigator.maxTouchPoints > 0 && window.innerWidth < 768)
@@ -141,8 +137,10 @@ export const ResultModal: React.FC<ResultModalProps> = ({ dataUrl, format, onClo
       return;
     }
 
-    // On Desktop:
-    // Copy image to clipboard
+    // On Desktop: Show copy notification & copy image to clipboard
+    setCopyStatus('copied-image');
+    setTimeout(() => setCopyStatus('idle'), 8000);
+
     try {
       if (navigator.clipboard && window.ClipboardItem) {
         await navigator.clipboard.write([
